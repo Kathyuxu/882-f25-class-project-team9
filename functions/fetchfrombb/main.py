@@ -12,9 +12,6 @@ BASE_PREFIX = os.getenv("BASE_PREFIX", "gbfs/bluebikes")
 FEEDS = {
     "station_information": "https://gbfs.lyft.com/gbfs/1.1/bos/en/station_information.json",
     "station_status": "https://gbfs.lyft.com/gbfs/1.1/bos/en/station_status.json",
-    "ebikes_at_stations": "https://gbfs.lyft.com/gbfs/1.1/bos/en/ebikes_at_stations.json",
-    "free_bike_status": "https://gbfs.lyft.com/gbfs/1.1/bos/en/free_bike_status.json",
-    "system_alerts": "https://gbfs.lyft.com/gbfs/1.1/bos/en/system_alerts.json",
     "system_regions": "https://gbfs.lyft.com/gbfs/1.1/bos/en/system_regions.json"
 }
 
@@ -48,7 +45,7 @@ def hello_pubsub(cloud_event):
 
         for feed_name, url in FEEDS.items():
             try:
-                print(f"⬇️ Fetching {feed_name} from {url} ...")
+                print(f" Fetching {feed_name} from {url} ...")
                 r = requests.get(url, timeout=30)
                 r.raise_for_status()
                 payload = r.json()
