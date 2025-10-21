@@ -116,7 +116,7 @@ Total rides in 2025: 3.57M
 ## Project Links
 - Jira Board: https://kathyxu.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?atlOrigin=eyJpIjoiMzc3NzllZmRkYjgwNGEwM2EyNDAyMDQ0YmUxMjZhYTIiLCJwIjoiaiJ9
 - Google Slides: https://docs.google.com/presentation/d/1Omhc5fMa41FHkgaKSywdfcyPfr950P-EY7PUNzjB724/edit?usp=sharing
-- Github: https://github.com/Kathyuxu/882-f25-class-project
+- Github: https://github.com/Kathyuxu/882-f25-class-project-team9.git
 
 ## Data Sources
 - MBTA Developer Portal: https://www.mbta.com/developers
