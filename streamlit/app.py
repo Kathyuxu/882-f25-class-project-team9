@@ -6,23 +6,34 @@ import altair as alt
 import json
 from google.cloud import bigquery
 # ---------- GCP Credentials ----------
-svc_key = st.secrets.get("gcp_service_account")  # 若未配置，返回 None
-if svc_key:
-    # 如果在 Secrets 里用三引号保存的是整段 JSON 字符串
-    if isinstance(svc_key, str):
-        sa_info = json.loads(svc_key)
-    else:
-        # 某些平台会把 JSON 自动解析成 dict
-        sa_info = dict(svc_key)
+import os, json, tempfile, streamlit as st
+from google.cloud import bigquery
 
+PROJECT_ID = "ba882-f25-class-project-team9"
+
+svc = st.secrets.get("gcp_service_account")
+sa_info = None
+if svc is not None:
+    if isinstance(svc, dict):
+        # 你在 Secrets 里用了 TOML 表（见下面方案 B）
+        sa_info = dict(svc)
+    elif isinstance(svc, str):
+        # 你在 Secrets 里用了三引号包的整段 JSON（见下面方案 A）
+        sa_info = json.loads(svc.strip())
+
+if sa_info:
     with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as f:
         f.write(json.dumps(sa_info).encode())
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = f.name
+    os.environ["GCP_PROJECT_ID"] = PROJECT_ID
+else:
+    # 本地兜底（不进 Git）
+    cred_path = os.path.join(os.path.dirname(__file__), "credentials.json")
+    if os.path.exists(cred_path):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = cred_path
+        os.environ["GCP_PROJECT_ID"] = PROJECT_ID
 
-PROJECT_ID = st.secrets.get("GCP_PROJECT_ID", "ba882-f25-class-project-team9")
-
-
-st.set_page_config(page_title="MBTA × Bluebikes — Last-Mile", layout="wide")
+client = bigquery.Client(project=PROJECT_ID)
 
 # ----------------------- CONFIG -----------------------
 PROJECT_ID = os.getenv("GCP_PROJECT_ID", "ba882-f25-class-project-team9")
