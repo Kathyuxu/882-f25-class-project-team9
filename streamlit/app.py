@@ -5,13 +5,22 @@ import pydeck as pdk
 import altair as alt
 from google.cloud import bigquery
 # ---------- GCP Credentials ----------
-if "gcp_service_account" in st.secrets:
-    sa_info = json.loads(st.secrets["gcp_service_account"])
+svc_key = st.secrets.get("gcp_service_account")  # 若未配置，返回 None
+if svc_key:
+    # 如果在 Secrets 里用三引号保存的是整段 JSON 字符串
+    if isinstance(svc_key, str):
+        sa_info = json.loads(svc_key)
+    else:
+        # 某些平台会把 JSON 自动解析成 dict
+        sa_info = dict(svc_key)
+
     with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as f:
         f.write(json.dumps(sa_info).encode())
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = f.name
 
 PROJECT_ID = st.secrets.get("GCP_PROJECT_ID", "ba882-f25-class-project-team9")
+
+
 st.set_page_config(page_title="MBTA × Bluebikes — Last-Mile", layout="wide")
 
 # ----------------------- CONFIG -----------------------
