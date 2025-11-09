@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 import pydeck as pdk
 import altair as alt
+import json
 from google.cloud import bigquery
 # ---------- GCP Credentials ----------
 svc_key = st.secrets.get("gcp_service_account")  # 若未配置，返回 None
