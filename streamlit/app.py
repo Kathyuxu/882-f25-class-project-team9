@@ -4,7 +4,14 @@ import streamlit as st
 import pydeck as pdk
 import altair as alt
 from google.cloud import bigquery
+# ---------- GCP Credentials ----------
+if "gcp_service_account" in st.secrets:
+    sa_info = json.loads(st.secrets["gcp_service_account"])
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as f:
+        f.write(json.dumps(sa_info).encode())
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = f.name
 
+PROJECT_ID = st.secrets.get("GCP_PROJECT_ID", "ba882-f25-class-project-team9")
 st.set_page_config(page_title="MBTA × Bluebikes — Last-Mile", layout="wide")
 
 # ----------------------- CONFIG -----------------------
