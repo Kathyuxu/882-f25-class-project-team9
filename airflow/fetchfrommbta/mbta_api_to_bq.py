@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import time
+from datetime import datetime, timezone
 from typing import Any, Dict, Iterable, List, Optional
 
 import requests
@@ -17,7 +18,6 @@ from airflow.providers.google.cloud.operators.bigquery import (
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
     GCSToBigQueryOperator,
 )
-from airflow.utils.dates import days_ago
 from airflow.exceptions import AirflowSkipException
 
 # -------- Runtime configuration --------
@@ -391,20 +391,21 @@ def _build_create_table_sql(
 
 with DAG(
     dag_id="mbta_realtime_to_bigquery",
-    start_date=days_ago(1),
-    schedule_interval="*/2 * * * *",
+    start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
+    schedule="*/2 * * * *",
     catchup=False,
     max_active_runs=1,
     default_args={"owner": "data-eng", "retries": 0},
     is_paused_upon_creation=True,
     tags=["mbta", "realtime", "bigquery"],
-) as dag:
+) as dag_ingest:
     create_dataset = BigQueryCreateEmptyDatasetOperator(
         task_id="create_dataset",
         project_id=BQ_PROJECT,
         dataset_id=BQ_DATASET,
         location=BQ_LOCATION,
         exists_ok=True,
+        gcp_conn_id="google_cloud_default",
     )
 
     create_pred_base = BigQueryInsertJobOperator(
@@ -419,6 +420,7 @@ with DAG(
         },
         project_id=BQ_PROJECT,
         location=BQ_LOCATION,
+        gcp_conn_id="google_cloud_default",
     )
 
     create_pred_staging = BigQueryInsertJobOperator(
@@ -431,6 +433,7 @@ with DAG(
         },
         project_id=BQ_PROJECT,
         location=BQ_LOCATION,
+        gcp_conn_id="google_cloud_default",
     )
 
     create_veh_base = BigQueryInsertJobOperator(
@@ -445,6 +448,7 @@ with DAG(
         },
         project_id=BQ_PROJECT,
         location=BQ_LOCATION,
+        gcp_conn_id="google_cloud_default",
     )
 
     create_veh_staging = BigQueryInsertJobOperator(
@@ -457,6 +461,7 @@ with DAG(
         },
         project_id=BQ_PROJECT,
         location=BQ_LOCATION,
+        gcp_conn_id="google_cloud_default",
     )
 
     pred_to_gcs = PythonOperator(
@@ -480,6 +485,7 @@ with DAG(
         source_format="NEWLINE_DELIMITED_JSON",
         project_id=BQ_PROJECT,
         location=BQ_LOCATION,
+        gcp_conn_id="google_cloud_default",
     )
 
     load_veh_stage = GCSToBigQueryOperator(
@@ -493,6 +499,7 @@ with DAG(
         source_format="NEWLINE_DELIMITED_JSON",
         project_id=BQ_PROJECT,
         location=BQ_LOCATION,
+        gcp_conn_id="google_cloud_default",
     )
 
     merge_pred = BigQueryInsertJobOperator(
@@ -524,6 +531,7 @@ with DAG(
         },
         project_id=BQ_PROJECT,
         location=BQ_LOCATION,
+        gcp_conn_id="google_cloud_default",
     )
 
     truncate_pred_stage = BigQueryInsertJobOperator(
@@ -536,6 +544,7 @@ with DAG(
         },
         project_id=BQ_PROJECT,
         location=BQ_LOCATION,
+        gcp_conn_id="google_cloud_default",
     )
 
     merge_veh = BigQueryInsertJobOperator(
@@ -565,6 +574,7 @@ with DAG(
         },
         project_id=BQ_PROJECT,
         location=BQ_LOCATION,
+        gcp_conn_id="google_cloud_default",
     )
 
     truncate_veh_stage = BigQueryInsertJobOperator(
@@ -577,6 +587,7 @@ with DAG(
         },
         project_id=BQ_PROJECT,
         location=BQ_LOCATION,
+        gcp_conn_id="google_cloud_default",
     )
 
     create_dataset >> [
@@ -587,3 +598,4 @@ with DAG(
     ]
     create_pred_base >> pred_to_gcs >> load_pred_stage >> merge_pred >> truncate_pred_stage
     create_veh_base >> veh_to_gcs >> load_veh_stage >> merge_veh >> truncate_veh_stage
+
