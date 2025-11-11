@@ -18,11 +18,11 @@ MBTA v3 API → Airflow (every 2 min) → GCS Raw Zone → BigQuery Staging → 
 - `rt_vehicle_positions` - Vehicle location snapshots
 - Derived dimension views: `dim_route_v`, `dim_stop_v`, `dim_trip_v`, `dim_vehicle_v`
 
-**Orchestration:** Apache Airflow DAG (`mbta_realtime_to_bigquery`) runs every 2 minutes, extracting data to GCS, loading to staging tables, and merging into partitioned base tables.
+**Orchestration:** Astronomer Airflow DAG (`mbta_realtime_to_bigquery`) runs every 2 minutes, extracting data to GCS, loading to staging tables, and merging into partitioned base tables.
 
 ### Bluebikes Pipeline (ELT)
 ```
-Bluebikes GBFS API → Cloud Function (every 5 min) → GCS → Cloud Function → BigQuery Staging → BigQuery Transformed Tables
+Bluebikes GBFS API → bluebikes_gbfs_to_gcs(updated every 2 mins) → GCS →bluebikes_stations_status_from_gcs → BigQuery Staging → BigQuery Transformed Tables
 ```
 
 **Data Sources:**
@@ -51,10 +51,10 @@ Only 3 tables contained active data and were selected for the pipeline.
 
 | Component | Technology |
 |-----------|-----------|
-| **Orchestration** | Apache Airflow (MBTA), Cloud Functions + Pub/Sub (Bluebikes) |
+| **Orchestration** | Astronomer Airflow (MBTA), Cloud Functions|
 | **Raw Storage** | Google Cloud Storage |
 | **Data Warehouse** | BigQuery |
-| **Visualization** | Tableau (Phase 1), Streamlit (Phase 2) |
+| **Visualization** | Streamlit |
 | **APIs** | MBTA v3 API, Bluebikes GBFS API |
 
 ## Design Decisions
@@ -91,9 +91,11 @@ Only 3 tables contained active data and were selected for the pipeline.
 - Discovered empty tables during initial assessment
 - Selected only populated tables for pipeline
 - Column-level cleanup for analysis readiness
-
-## Current Analytics & Insights
-Phase 1 Visualizations (Tableau)
+  
+## Machine Learning
+Using Airflow through Astronomer 
+## Data Visualization & Presentation
+Streamlit
 ### MBTA:
 
 Top 10 Start Stations by trip volume
