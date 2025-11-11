@@ -4,6 +4,11 @@ Yu Xu, Nilay Jaini, Shuomeng Guan, YiFeng Chen
 ## Project Overview
 This project builds a real-time data pipeline integrating MBTA transit data with Bluebikes bike-share data to analyze "last-mile" transportation effectiveness in the Boston area. Our goal is to evaluate how well Bluebikes complements MBTA service by examining station proximity, availability patterns, and usage coordination between the two systems.
 Key Question: Is the last mile being served effectively?
+## Phase 1
+
+## Phase 2 Updates
+Phase 2 migrated all data pipelines to Astronomer Cloud (Airflow), implemented machine learning models for predictive analytics and transit desert identification, and deployed a comprehensive Streamlit dashboard for interactive visualization and real-time monitoring.
+
 ## Architecture Overview
 ### MBTA Pipeline(EtLT)
 MBTA v3 API → Airflow (every 2 min) → GCS Raw Zone → BigQuery Staging → BigQuery Base Tables → Dashboard
@@ -22,7 +27,7 @@ MBTA v3 API → Airflow (every 2 min) → GCS Raw Zone → BigQuery Staging → 
 
 ### Bluebikes Pipeline (ELT)
 ```
-Bluebikes GBFS API → bluebikes_gbfs_to_gcs(updated every 2 mins) → GCS →bluebikes_stations_status_from_gcs → BigQuery Staging → BigQuery Transformed Tables
+Bluebikes GBFS API → bluebikes_gbfs_to_gcs(updated every 2 mins) → GCS → bluebikes_stations_status_from_gcs → BigQuery Staging → BigQuery Transformed Tables
 ```
 
 **Data Sources:**
@@ -94,35 +99,130 @@ Only 3 tables contained active data and were selected for the pipeline.
   
 ## Machine Learning
 Using Airflow through Astronomer 
-## Data Visualization & Presentation
-Streamlit
+
 ### MBTA:
 
-Top 10 Start Stations by trip volume
-Trips by Hour of Day showing peak commute patterns
-Peak usage: 7-9 AM and 4-6 PM
+#### MBTA Occupancy Prediction (BigQueryML)
+**Model:** Logistic Regression with AUTO_CLASS_WEIGHTS=TRUE, MAX_ITERATIONS=50
 
-### Bluebikes:
+**Pipeline:** Weekly Airflow DAG (`occ_train_weekly`, Mon 05:00) orchestrates end-to-end feature engineering, training, and evaluation.
 
-Start/End Station Top 10 analysis
-Week Day Analysis: Member vs. Casual usage patterns
-Ride by Season breakdown
-Total rides in 2025: 3.57M
+**Features:**
+- `hour_of_day`, `day_of_week`, `is_weekend`
+- `lat_bin`, `lon_bin` (coarse geo-bins)
+- `route_id`
+- `current_status`
 
-### Key Findings:
+**Training Window:** Rolling window from T-67d to T-7d, evaluated on last 7 days
 
-- Complementary usage patterns between transit and bike-share
-- High Bluebikes activity near major MBTA stations
-- Seasonal variation in bike usage
+**Results:**
+- Fast convergence with class weighting mitigating imbalance
+- Route and time-of-day are strongest signals
+- Coarse geo-bins improve generalization
+
+**Model Artifacts:**
+- `mbta_ml.occ_features_min`
+- `mbta_ml.occ_lr_min`
+- `mbta_ml.occ_eval_last`
+### Bluebikes 
+#### Transit Desert Clustering
+**Model:** K-means Clustering
+
+**Purpose:** Identify MBTA stations with poor Bluebikes connectivity
+
+**Features (10 engineered):**
+- Spatial proximity (distance to nearest Bluebikes stations)
+- Temporal availability (bike availability during peak hours)
+- Ridership patterns (MBTA usage + Bluebikes demand)
+
+**Current Status:**
+- Dashboard displays 514 observations (~3-4x actual 153 stations) due to insufficient deduplication
+- Classification logic currently labels all stations as "Transit Deserts"
+- Threshold-based criteria (>800m walking distance OR <2 morning bikes) poorly calibrated for Boston's density
+
+**Phase 3 Improvements:**
+1. Implement proper run versioning to display only most recent results
+2. Transition from absolute thresholds to percentile-based classification
+3. Validate labels against ground-truth assessments of known well-served/underserved stations
+ 
+#### Demand Prediction
+**Model:** Linear Regression
+
+**Purpose:** Predict future Bluebikes demand for bike redistribution and station planning
+
+**Output:** Predictions stored in BigQuery ML, displayed in Streamlit
+
+**Use Case:** Identify when and where demand peaks occur for proactive rebalancing
+
+**Integration:** Fully automated through Airflow pipeline with scheduled training and updates
+
+## Streamlit Dashboard
+
+Interactive front-end bringing together all pipeline outputs with real-time updates via Airflow DAGs and BigQuery.
+
+### Dashboard Pages
+
+**1. Review_MBTA**
+- Historical system performance
+- Basic Analysis
+
+**2. Review_BB**
+- Historical system performance
+- Top Bluebikes start/end stations
+- Ridership distribution across Boston
+  
+**3. Overview**
+- Geo Analysis of stations meeting "Last-mile" requirement
+- Maps for Visualization
+  
+**4. Summary**
+- Last-mile coverage evaluation
+- 333 out of 514 MBTA stations meet one-mile rule
+- 181 stations do not meet criteria
+- Detailed distance statistics
+
+**5. Recommendations**
+- Short-, medium-, and long-term strategies
+- Pilot location suggestions for new stations
+
+**6. Occupancy Prediction**
+- MBTA vehicle crowding forecasts (BigQuery ML logistic regression)
+- Likelihood of high/low occupancy by route and hour
+- Real-time less-crowded travel options
+  
+**7. Bluebikes Clustering**
+- K-Means model visualization
+- "Transit desert" identification
+- Poor connectivity areas highlighted
+
+**8. Bluebikes Demand Prediction**
+- Predicted pickups and drop-offs by station
+- Highest forecasted usage stations
+- Time period analysis
+
+**9. Availability**
+- Search any MBTA station
+- View nearest Bluebikes docks instantly
+- Real-time bike availability
+
+
+
 
 ## Project Links
-- Jira Board: https://kathyxu.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?atlOrigin=eyJpIjoiMzc3NzllZmRkYjgwNGEwM2EyNDAyMDQ0YmUxMjZhYTIiLCJwIjoiaiJ9
-- Google Slides: https://docs.google.com/presentation/d/1Omhc5fMa41FHkgaKSywdfcyPfr950P-EY7PUNzjB724/edit?usp=sharing
-- Github: https://github.com/Kathyuxu/882-f25-class-project-team9.git
+
+- **GitHub:** https://github.com/Kathyuxu/882-f25-class-project-team9.git
+- **Jira Board:** [Project Backlog](https://kathyxu.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?atlOrigin=eyJpIjoiMzc3NzllZmRkYjgwNGEwM2EyNDAyMDQ0YmUxMjZhYTIiLCJwIjoiaiJ9)
+- **Slides:** [Phase 2 Presentation](https://docs.google.com/presentation/d/1Xad4EMYtHJDbGBUnD0eceDAAJnp_ZuNxo4-JTpAIwfg/edit?usp=sharing))
+- **Streamlit:** Screenshots available in Appendix_3 (deployment pending)
 
 ## Data Sources
-- MBTA Developer Portal: https://www.mbta.com/developers
-- Bluebikes System Data: https://bluebikes.com/system-data
 
+- **MBTA Developer Portal:** https://www.mbta.com/developers
+- **Bluebikes System Data:** https://bluebikes.com/system-data
 
+## License
+Academic project for BA882 - Fall 2025
 
+---
+
+*For questions or issues, please contact the team via GitHub Issues.*
