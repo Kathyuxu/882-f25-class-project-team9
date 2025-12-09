@@ -304,7 +304,7 @@ MAX_ITERATIONS = 50
 
 ### 3. Bluebikes Demand Prediction
 
-**Model Type:** Linear Regression (BigQuery ML), ARIMA, DNN, XGBoost, Random Forest
+**Model Type:** Linear Regression (BigQuery ML)
 
 **Purpose:** Forecast future Bluebikes demand for proactive bike redistribution
 
@@ -330,8 +330,189 @@ MAX_ITERATIONS = 50
 - Predictions stored in BigQuery
 - Real-time visualization in Streamlit dashboard
 
-**Best Model:** ARIMA
+---
 
+## 🤖 Large Language Model Operations
+
+### 1. AI Transit Assistant (Routing + Insights RAG)
+
+**Purpose:** Answer natural-language MBTA travel queries with real-time data and ML predictions
+
+**Architecture:**
+```
+User Query → LLM Origin/Destination Extraction → BigQuery Station Lookup 
+→ ML Occupancy Prediction → RAG Retrieval → LLM Response
+```
+
+**Pipeline Flow:**
+1. **Query Processing:** User submits natural language query (e.g., "How crowded is the Red Line from Harvard to Park Street?")
+2. **Entity Extraction:** Gemini LLM extracts origin and destination as clean, geocodable locations
+3. **Station Mapping:** Python resolves locations to nearest MBTA stations via BigQuery spatial queries
+4. **Occupancy Prediction:** Queries BigQuery ML logistic regression model for predicted vehicle crowding
+5. **Context Retrieval:** RAG layer retrieves relevant MBTA operational context from embeddings table
+6. **Response Generation:** Gemini synthesizes structured station data, ML predictions, and retrieved context into grounded recommendations
+
+**Key Features:**
+- Real-time route recommendations based on current crowding levels
+- Data-grounded responses (no hallucination)
+- Integration with occupancy prediction models
+- Contextual awareness of service disruptions
+
+---
+
+### 2. Bluebikes Availability Assistant (Insights RAG)
+
+**Purpose:** Answer questions about Bluebikes availability using historical data
+
+**Architecture:**
+```
+Query → BigQuery Retrieval → Structured Insights → LLM → Response
+```
+
+**Pipeline Flow:**
+1. **Query Reception:** Streamlit frontend passes user query to assistant.py
+2. **Model Initialization:** Gemini model registers BigQuery-backed tool (`get_station_availability_by_name`)
+3. **Tool Invocation:** Gemini decides whether to call the tool via function calling
+4. **Data Retrieval:** Executes parameterized SQL against precomputed station-day-hour statistics
+5. **Response Generation:** Returns historical availability data as `functionResponse` to Gemini
+6. **Final Output:** Gemini generates data-grounded explanation
+
+**Example Query:**
+> "Are Bluebikes usually available at 30 Dane St on Friday evenings?"
+
+**Response Components:**
+- Station name extraction
+- Time slot identification (Friday, evening)
+- Historical availability statistics
+- Contextual interpretation
+
+---
+
+### 3. MBTA & Bluebikes Protocol Assistant (RAG + Text-to-SQL Router)
+
+**Purpose:** Route user questions between policy retrieval and data queries
+
+**Architecture:**
+```
+User Query → Classification Node → [RAG for Policy | Text-to-SQL for Data] → Response
+```
+
+**Dual Retrieval System:**
+
+**A. RAG for Policy Questions:**
+- **Data Source:** Web-scraped transit policy documents
+- **Chunking:** LangChain's RecursiveCharacterTextSplitter
+- **Embeddings:** all-mpnet-base-v2 model
+- **Vector Store:** Pinecone
+- **Use Case:** Transit rules, regulations, fare policies
+
+**B. Text-to-SQL for Data Queries:**
+- **Data Source:** Bluebikes historical data in BigQuery
+- **Query Generation:** Natural language → SQL
+- **Use Case:** Usage patterns, station statistics, temporal trends
+
+**Routing Performance:**
+- **Routing Accuracy:** 87%
+- **Classification:** Explicit LangGraph agent classification node
+
+**Challenges Identified:**
+- **Precision@3:** 0.33 (only 1 in 3 retrieved chunks is relevant)
+- **LLM Faithfulness:** 0.67 (occasional hallucination beyond context)
+- **Completeness:** 0.475 (incomplete answers reduce user trust)
+
+**Key Insight:** Routing intelligence matters as much as retrieval quality
+
+**Evaluation Infrastructure:**
+- Built with LangSmith for quantitative metrics
+- Ground-truth testing dataset
+- Continuous monitoring of precision, recall, faithfulness
+
+---
+
+### 4. Bluebikes & Policy Unified Assistant (Multi-Agent System)
+
+**Purpose:** Single entry point merging Bluebikes insights and policy agents
+
+**Architecture:** LangGraph-based multi-agent system with intelligent routing
+
+**Implementation:**
+- **Router Logic:** `multi_agent.py` with classification node
+- **Agent 1 - Bluebikes Insights Agent:** Historical usage patterns, trends, station-level insights
+- **Agent 2 - Policy Agent:** Policy documents, rules, text-based interpretation
+
+**Routing Decision Tree:**
+```python
+if query_type == "historical_usage_patterns":
+    route_to(BluebikesInsightsAgent)
+elif query_type == "policy_documents":
+    route_to(PolicyAgent)
+```
+
+**Benefits:**
+- Reduced user friction (single interface)
+- Improved efficiency (intelligent pre-routing)
+- Seamless experience across query types
+
+---
+
+### 5. Streamlit Cloud Deployment
+
+**Unified Application Components:**
+
+**A. Chat Assistant:**
+- Retrieval-Augmented Generation pipeline
+- Query classification and routing
+- Semantic retrieval from Pinecone vector database
+- Context-grounded answers via GPT-4o-mini
+
+**B. Metrics Dashboard:**
+- **Performance Metrics:**
+  - Precision@3
+  - Recall
+  - nDCG (Normalized Discounted Cumulative Gain)
+  - MRR (Mean Reciprocal Rank)
+  - MAP (Mean Average Precision)
+  - LLM-judge evaluations
+
+**C. Explainability Features:**
+- Retrieved chunk inspection
+- "Why this answer?" panel
+- Transparency into reasoning process
+
+**Deployment Link:** [Streamlit App](https://mbta-bluebikes-app-468479679715.us-east1.run.app)
+
+---
+
+### LLM Challenges & Solutions
+
+#### Challenge: Zendesk Help Center Scraping
+
+**Problem:**
+- Bluebikes Zendesk help center pages returned 403 Forbidden errors
+- Standard User-Agent headers failed
+- Automatic link discovery failed
+- Manual URL whitelisting failed
+
+**Root Cause:**
+- Zendesk's aggressive bot protection
+- Detection of scraping patterns regardless of User-Agent
+
+**Solution Attempts:**
+1. ❌ Browser-like User-Agent: `Mozilla/5.0 (Windows NT 10.0; Win64; x64)`
+2. ❌ Automatic crawler for link discovery
+3. ❌ Manual URL specification for important articles
+4. ✅ **Final Decision:** Skip help center, focus on main Bluebikes pages
+
+**Rationale:**
+- Main Bluebikes website covers ~80% of user needs
+- Help center mostly addresses edge cases
+- Potential solution (Selenium) requires complex setup and significant time
+- Not a good time-value tradeoff given project constraints
+
+**Future Options:**
+- Selenium for browser simulation
+- Playwright for advanced scraping
+- Official API access (if available)
 
 ---
 
@@ -414,21 +595,30 @@ Built with **Streamlit**, the dashboard provides real-time insights and interact
 - Walking distance calculations
 - Station status indicators
 
-#### 10. 🔍 AI Transit Assistant
-- **Real-time Station Finder:**
-  - Search any MBTA station by name
-  - View nearest Bluebikes stations instantly
-  - Display current bike and dock availability
-- Walking distance calculations
-- Station status indicators
+#### 10. 🤖 AI Transit Assistant
+- **Intelligent Query System:**
+  - Natural language questions about MBTA routes and crowding
+  - Origin/destination extraction via Gemini LLM
+  - Real-time occupancy predictions from BigQuery ML
+  - RAG-based operational context retrieval
+- **Smart Features:**
+  - Data-grounded route recommendations (no hallucination)
+  - Alternative suggestions during high crowding
+  - Integration with live predictions and ML models
+  - Contextual service disruption awareness
 
-#### 11. 🔍 Bluebikes & Policy Assistant
-- **Real-time Station Finder:**
-  - Search any MBTA station by name
-  - View nearest Bluebikes stations instantly
-  - Display current bike and dock availability
-- Walking distance calculations
-- Station status indicators
+#### 11. 📋 Bluebikes & Policy Unified Assistant
+- **Multi-Agent System:**
+  - Single entry point for all Bluebikes and policy questions
+  - Intelligent routing between Insights Agent and Policy Agent
+  - Historical availability queries with BigQuery function calling
+  - Policy document retrieval with RAG (Pinecone + GPT-4o-mini)
+- **Features:**
+  - Station availability predictions by day/time
+  - Transit policy explanations and rule interpretations
+  - Explainability panel: "Why this answer?"
+  - Performance metrics dashboard (Precision@3, Recall, nDCG, MRR, MAP)
+
 ---
 
 ## 🚀 Getting Started
@@ -508,7 +698,11 @@ streamlit run app.py
 │   ├── dags/
 │   │   ├── mbta_realtime_to_bigquery.py
 │   │   ├── occ_train_weekly.py
-│   │   └── bluebikes_ml_pipeline.py
+│   │   ├── bluebikes_ml_pipeline.py
+│   │   ├── transit_desert_clustering.py
+│   │   ├── bluebikes_station_hour_demand.py
+│   │   ├── policy_knowledge_build_dag.py
+│   │   └── policy_chunk_dag.py
 │   ├── include/
 │   │   ├── sql/              # BigQuery SQL templates
 │   │   └── utils/            # Helper functions
@@ -530,8 +724,13 @@ streamlit run app.py
 │   │   ├── 6_Occupancy_Prediction.py
 │   │   ├── 7_Bluebikes_Clustering.py
 │   │   ├── 8_Bluebikes_Demand_Prediction.py
-│   │   └── 9_Availability.py
+│   │   ├── 9_Availability.py
+│   │   ├── 10_AI_Transit_Assistant.py
+│   │   └── 11_Bluebikes_Policy_Assistant.py
 │   ├── app.py               # Main dashboard entry
+│   ├── assistant.py         # Bluebikes availability agent
+│   ├── bq_tools.py          # BigQuery function calling tools
+│   ├── multi_agent.py       # LangGraph routing logic
 │   ├── utils.py             # Shared utilities
 │   └── requirements.txt
 ├── failure/                 # Failed experiment documentation
@@ -632,18 +831,14 @@ streamlit run app.py
 
 ### Project Links
 - **GitHub Repository:** [882-f25-class-project-team9](https://github.com/Kathyuxu/882-f25-class-project-team9)
+- **Streamlit Dashboard:** [Live App](https://mbta-bluebikes-app-468479679715.us-east1.run.app)
 - **Jira Board:** [Project Backlog](https://kathyxu.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog)
-- **Phase 2 Slides:** [Presentation](https://docs.google.com/presentation/d/1Xad4EMYtHJDbGBUnD0eceDAAJnp_ZuNxo4-JTpAIwfg/edit)
-- **Streamlit Dashboard:** Coming soon!
+- **Final Presentation:** [Google Slides](https://docs.google.com/presentation/d/1d874VPe1o6j5nRVfLHlYI__MmzXFBjpIaQKlefQHoko/edit?usp=sharing)
+- **Agent Demo Video:** [LangGraph Agent Demo](https://drive.google.com/file/d/11WL-J8P5z-2CYwUK4WmMh2W8WQR1HwWu/view?usp=drive_link)
 
 ### Data Sources
 - **MBTA Developer Portal:** [https://www.mbta.com/developers](https://www.mbta.com/developers)
 - **Bluebikes System Data:** [https://bluebikes.com/system-data](https://bluebikes.com/system-data)
-- **Policy Website:**: [https://www.mbta.com/policies](https://www.mbta.com/policies)
-                       [https://www.mbta.com/bikes](https://www.mbta.com/bikes)
-                       [https://bluebikes.com/how-it-works]( https://bluebikes.com/how-it-works)
-                       [https://bluebikes.com/pricing](https://bluebikes.com/pricing)
-                       [https://bluebikes.com/system-data](https://bluebikes.com/system-data)
 
 ### Documentation
 - [MBTA API Documentation](https://www.mbta.com/developers/v3-api)
@@ -663,7 +858,7 @@ This project is an academic assignment for **BA882 - Fall 2025** at Questrom Sch
 
 ## 🙏 Acknowledgments
 
-- **Professor:** Dr. Brock Tibert, BA882 - Fall 2025
+- **Professor:** Dr. [Professor Name], BA882 - Fall 2025
 - **MBTA:** For providing comprehensive open data APIs
 - **Bluebikes:** For maintaining GBFS-compliant real-time data feeds
 - **Astronomer:** For Airflow hosting and support
@@ -674,6 +869,8 @@ This project is an academic assignment for **BA882 - Fall 2025** at Questrom Sch
 ## 📞 Contact
 
 For questions, feedback, or collaboration opportunities:
+
+- **GitHub Issues:** [Report a bug or suggest a feature](https://github.com/Kathyuxu/882-f25-class-project-team9/issues)
 - **Email:** Contact team members via GitHub profiles
 
 ---
