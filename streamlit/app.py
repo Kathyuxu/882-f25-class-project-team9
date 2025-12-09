@@ -48,7 +48,7 @@ MBTA_STOP_ADDRESSES = {
 # ---------- Cached Query ----------
 @st.cache_data(ttl=600)
 def run_query(sql: str, _params=None, cache_key: str = "") -> pd.DataFrame:
-    # cache_key 仅用于参与缓存哈希；不在函数体内使用
+    # cache_key
     _ = cache_key
     job_config = bigquery.QueryJobConfig(query_parameters=_params or [])
     return client.query(sql, job_config=job_config).to_dataframe()
