@@ -7,7 +7,7 @@
 
 > **Real-time data pipeline analyzing "last-mile" transportation effectiveness in the Boston area**
 
-## 👥 Team Members
+##  Team Members
 
 - **Yu Xu** - [@Kathyuxu](https://github.com/Kathyuxu)
 - **Nilay Jaini** - [@nilayjaini](https://github.com/nilayjaini)
@@ -16,7 +16,7 @@
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [Project Overview](#-project-overview)
 - [Key Features](#-key-features)
@@ -129,7 +129,7 @@ We evaluate how well Bluebikes complements MBTA service by examining:
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 | Layer | Technologies |
 |-------|-------------|
@@ -184,7 +184,7 @@ We evaluate how well Bluebikes complements MBTA service by examining:
 
 ---
 
-### 🚴 Bluebikes Real-Time Pipeline
+###  Bluebikes Real-Time Pipeline
 
 **Architecture Pattern:** ELT (Extract, Load, Transform)
 
@@ -255,9 +255,9 @@ MAX_ITERATIONS = 50
 - **Orchestration:** Airflow DAG `occ_train_weekly`
 
 **Results:**
-- ✅ Fast convergence with class weight balancing
-- 📊 Route and time-of-day are strongest predictors
-- 🗺️ Coarse geo-bins improve generalization across the network
+-  Fast convergence with class weight balancing
+-  Route and time-of-day are strongest predictors
+-  Coarse geo-bins improve generalization across the network
 
 **Artifacts:**
 - `mbta_ml.occ_features_min` - Feature engineering table
@@ -293,9 +293,9 @@ MAX_ITERATIONS = 50
 - **Well-Served:** Meets proximity and availability thresholds
 
 **Current Limitations & Phase 3 Improvements:**
-1. ⚠️ Insufficient deduplication (514 vs. 153 actual stations)
-2. ⚠️ All stations currently classified as deserts (threshold miscalibration)
-3. 🔄 **Planned fixes:**
+1.  Insufficient deduplication (514 vs. 153 actual stations)
+2.  All stations currently classified as deserts (threshold miscalibration)
+3.  **Planned fixes:**
    - Implement run versioning
    - Switch to percentile-based classification
    - Validate against ground-truth assessments
@@ -321,9 +321,9 @@ MAX_ITERATIONS = 50
 - Net demand (pickups - drop-offs)
 
 **Use Cases:**
-- 🚚 Optimize rebalancing truck routes
-- 📍 Identify stations requiring bike replenishment
-- 🔮 Anticipate capacity constraints
+-  Optimize rebalancing truck routes
+-  Identify stations requiring bike replenishment
+-  Anticipate capacity constraints
 
 **Integration:**
 - Automated training via Airflow DAG
@@ -516,25 +516,25 @@ elif query_type == "policy_documents":
 
 ---
 
-## 📊 Interactive Dashboard
+##  Interactive Dashboard
 
 Built with **Streamlit**, the dashboard provides real-time insights and interactive visualizations.
 
 ### Dashboard Pages
 
-#### 1. 📈 Review_MBTA
+#### 1.  Review_MBTA
 - Historical system performance metrics
 - Ridership trends over time
 - Route-level analysis
 - Vehicle utilization patterns
 
-#### 2. 🚴 Review_BB
+#### 2.  Review_BB
 - Bluebikes usage statistics
 - Top start/end stations (ranked by trip volume)
 - Geographic distribution of ridership
 - Temporal patterns (hourly, daily, seasonal)
 
-#### 3. 🗺️ Overview
+#### 3.  Overview
 - **Last-Mile Geo Analysis**
   - Interactive map showing MBTA stations
   - Color-coded by Bluebikes proximity
@@ -542,7 +542,7 @@ Built with **Streamlit**, the dashboard provides real-time insights and interact
 - Real-time station status
 - Coverage heatmaps
 
-#### 4. 📋 Summary
+#### 4.  Summary
 - **Key Statistics:**
   - 333 / 514 MBTA stations meet one-mile rule (64.8%)
   - 181 stations do not meet criteria (35.2%)
@@ -550,7 +550,7 @@ Built with **Streamlit**, the dashboard provides real-time insights and interact
 - Coverage metrics by line/route
 - Recommendations summary
 
-#### 5. 💡 Recommendations
+#### 5.  Recommendations
 - **Short-term** (0-6 months)
   - Priority station list for new Bluebikes docks
   - Quick-win locations
@@ -561,7 +561,7 @@ Built with **Streamlit**, the dashboard provides real-time insights and interact
   - Strategic network growth
   - Integration with other mobility services
 
-#### 6. 🔮 Occupancy Prediction
+#### 6.  Occupancy Prediction
 - Real-time MBTA vehicle crowding forecasts
 - Probability of high/low occupancy by:
   - Route
@@ -570,7 +570,7 @@ Built with **Streamlit**, the dashboard provides real-time insights and interact
 - Alternative route suggestions
 - Historical accuracy metrics
 
-#### 7. 🎯 Bluebikes Clustering
+#### 7.  Bluebikes Clustering
 - K-Means model visualization
 - **Transit Desert Identification:**
   - Map view with cluster assignments
@@ -578,7 +578,7 @@ Built with **Streamlit**, the dashboard provides real-time insights and interact
   - Poor connectivity areas highlighted
 - Feature importance analysis
 
-#### 8. 📊 Bluebikes Demand Prediction
+#### 8.  Bluebikes Demand Prediction
 - Forecasted pickups and drop-offs by station
 - **Top Predicted Demand Stations:**
   - Next hour
@@ -587,7 +587,7 @@ Built with **Streamlit**, the dashboard provides real-time insights and interact
 - Time series charts
 - Rebalancing recommendations
 
-#### 9. 🔍 Availability Search
+#### 9.  Availability Search
 - **Real-time Station Finder:**
   - Search any MBTA station by name
   - View nearest Bluebikes stations instantly
@@ -595,7 +595,7 @@ Built with **Streamlit**, the dashboard provides real-time insights and interact
 - Walking distance calculations
 - Station status indicators
 
-#### 10. 🤖 AI Transit Assistant
+#### 10.  AI Transit Assistant
 - **Intelligent Query System:**
   - Natural language questions about MBTA routes and crowding
   - Origin/destination extraction via Gemini LLM
@@ -607,7 +607,7 @@ Built with **Streamlit**, the dashboard provides real-time insights and interact
   - Integration with live predictions and ML models
   - Contextual service disruption awareness
 
-#### 11. 📋 Bluebikes & Policy Unified Assistant
+#### 11.  Bluebikes & Policy Unified Assistant
 - **Multi-Agent System:**
   - Single entry point for all Bluebikes and policy questions
   - Intelligent routing between Insights Agent and Policy Agent
@@ -621,7 +621,7 @@ Built with **Streamlit**, the dashboard provides real-time insights and interact
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Python 3.9+
@@ -689,7 +689,7 @@ streamlit run app.py
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 882-f25-class-project-team9/
@@ -741,33 +741,33 @@ streamlit run app.py
 
 ---
 
-## ✅ Data Quality & Validation
+##  Data Quality & Validation
 
 ### MBTA Pipeline
-- ✅ **Deduplication:** SHA1-based composite keys prevent duplicate events
-- ✅ **Timestamp Normalization:** All timestamps converted to UTC
-- ✅ **Partition Pruning:** Efficient querying via `DATE(observed_at_utc)` partitioning
-- ✅ **Data Filtering:** Predictions with `stop_id IS NULL` are excluded
-- ✅ **Service Date Logic:** Follows MBTA convention (`observed_at_utc - 3 hours`)
-- ✅ **Schema Validation:** Enforced data types and constraints
+-  **Deduplication:** SHA1-based composite keys prevent duplicate events
+-  **Timestamp Normalization:** All timestamps converted to UTC
+-  **Partition Pruning:** Efficient querying via `DATE(observed_at_utc)` partitioning
+-  **Data Filtering:** Predictions with `stop_id IS NULL` are excluded
+-  **Service Date Logic:** Follows MBTA convention (`observed_at_utc - 3 hours`)
+-  **Schema Validation:** Enforced data types and constraints
 
 ### Bluebikes Pipeline
-- ✅ **Endpoint Validation:** Only populated API endpoints selected (3/6)
-- ✅ **Column Cleanup:** Irrelevant fields removed to reduce storage costs
-- ✅ **Data Normalization:** Arrays converted to comma-delimited strings
-- ✅ **Dimension Enrichment:** Regions merged into station info for single source of truth
-- ✅ **Freshness Monitoring:** Timestamp checks to detect stale data
+-  **Endpoint Validation:** Only populated API endpoints selected (3/6)
+-  **Column Cleanup:** Irrelevant fields removed to reduce storage costs
+-  **Data Normalization:** Arrays converted to comma-delimited strings
+-  **Dimension Enrichment:** Regions merged into station info for single source of truth
+-  **Freshness Monitoring:** Timestamp checks to detect stale data
 
 ---
 
-## 🔍 Key Findings
+##  Key Findings
 
 ### Last-Mile Coverage Analysis
 
 **Overall Statistics:**
-- ✅ **64.8%** of MBTA stations (333/514) meet the one-mile connectivity rule
-- ⚠️ **35.2%** of stations (181/514) lack adequate Bluebikes access
-- 📏 Median distance to nearest Bluebikes station: **420 meters**
+-  **64.8%** of MBTA stations (333/514) meet the one-mile connectivity rule
+-  **35.2%** of stations (181/514) lack adequate Bluebikes access
+-  Median distance to nearest Bluebikes station: **420 meters**
 
 **By Transit Line:**
 | Line | Stations | Well-Served | Coverage |
@@ -797,7 +797,7 @@ streamlit run app.py
 
 ---
 
-## 🔮 Future Improvements
+##  Future Improvements
 
 ### Phase 3 Roadmap
 
@@ -827,7 +827,7 @@ streamlit run app.py
 
 ---
 
-## 📚 Resources
+##  Resources
 
 ### Project Links
 - **GitHub Repository:** [882-f25-class-project-team9](https://github.com/Kathyuxu/882-f25-class-project-team9)
@@ -848,7 +848,7 @@ streamlit run app.py
 
 ---
 
-## 📄 License
+##  License
 
 This project is an academic assignment for **BA882 - Fall 2025** at Questrom School of Business, Boston University.
 
@@ -856,7 +856,7 @@ This project is an academic assignment for **BA882 - Fall 2025** at Questrom Sch
 
 ---
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **Professor:** Dr. [Professor Name], BA882 - Fall 2025
 - **MBTA:** For providing comprehensive open data APIs
@@ -866,7 +866,7 @@ This project is an academic assignment for **BA882 - Fall 2025** at Questrom Sch
 
 ---
 
-## 📞 Contact
+##  Contact
 
 For questions, feedback, or collaboration opportunities:
 
