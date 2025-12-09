@@ -35,43 +35,43 @@
 
 ---
 
-## 🎯 Project Overview
+##  Project Overview
 
 This project builds a **real-time data pipeline** integrating MBTA (Massachusetts Bay Transportation Authority) transit data with Bluebikes bike-share data to analyze "last-mile" transportation effectiveness in the Boston metropolitan area.
 
-### 🔍 Research Question
+###  Research Question
 **"Is the last mile being served effectively?"**
 
 We evaluate how well Bluebikes complements MBTA service by examining:
-- 📍 Station proximity and accessibility
-- 🚴 Bike availability patterns during peak transit hours
-- 🔄 Usage coordination between transit and bike-share systems
-- 🗺️ Geographic coverage and transit desert identification
+-  Station proximity and accessibility
+-  Bike availability patterns during peak transit hours
+-  Usage coordination between transit and bike-share systems
+-  Geographic coverage and transit desert identification
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 ### Real-Time Data Integration
-- ⏱️ **MBTA data** refreshed every 2 minutes
-- 🔄 **Bluebikes data** updated every 5 minutes
-- 📊 Historical data retention for trend analysis
+-  **MBTA data** refreshed every 2 minutes
+-  **Bluebikes data** updated every 5 minutes
+-  Historical data retention for trend analysis
 
 ### Advanced Analytics
-- 🤖 **ML-powered occupancy prediction** for MBTA vehicles
-- 📈 **Demand forecasting** for Bluebikes stations
-- 🎯 **Transit desert identification** using K-means clustering
-- 📐 **Spatial analysis** of last-mile connectivity
+-  **ML-powered occupancy prediction** for MBTA vehicles
+-  **Demand forecasting** for Bluebikes stations
+-  **Transit desert identification** using K-means clustering
+-  **Spatial analysis** of last-mile connectivity
 
 ### Interactive Visualization
-- 🗺️ Real-time station availability maps
-- 📊 Performance dashboards with key metrics
-- 🔮 Predictive analytics visualizations
-- 💡 Actionable recommendations
+-  Real-time station availability maps
+-  Performance dashboards with key metrics
+-  Predictive analytics visualizations
+-  Actionable recommendations
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -144,9 +144,9 @@ We evaluate how well Bluebikes complements MBTA service by examining:
 
 ---
 
-## 🔄 Data Pipelines
+##  Data Pipelines
 
-### 📍 MBTA Real-Time Pipeline
+###  MBTA Real-Time Pipeline
 
 **Architecture Pattern:** EtLT (Extract, transform, Load, Transform)
 
@@ -169,11 +169,11 @@ We evaluate how well Bluebikes complements MBTA service by examining:
 
 #### Orchestration
 **Airflow DAG:** `mbta_realtime_to_bigquery`
-- ⏱️ Runs every 2 minutes
-- 📥 Extracts data from 3 API endpoints in parallel
-- 💾 Loads raw JSON to GCS with timestamps
-- 🔄 Stages data in BigQuery
-- 🔀 Merges into partitioned base tables with deduplication
+-  Runs every 5 minutes
+-  Extracts data from 3 API endpoints in parallel
+-  Loads raw JSON to GCS with timestamps
+-  Stages data in BigQuery
+-  Merges into partitioned base tables with deduplication
 
 #### Data Quality Measures
 - SHA1-based deduplication keys
@@ -190,12 +190,12 @@ We evaluate how well Bluebikes complements MBTA service by examining:
 
 #### Data Source Evaluation
 Initially assessed 6 GBFS API endpoints:
-- `ebikes_at_stations` ❌ (no data)
-- `system_information` ❌ (no data)
-- `free_bike_status` ❌ (no data)
-- `station_information` ✅
-- `station_status` ✅
-- `system_regions` ✅
+- `ebikes_at_stations`  (no data)
+- `system_information`  (no data)
+- `free_bike_status`  (no data)
+- `station_information` 
+- `station_status` 
+- `system_regions` 
 
 **Selected:** Only 3 populated endpoints
 
@@ -226,7 +226,7 @@ Initially assessed 6 GBFS API endpoints:
 
 ---
 
-## 🤖 Machine Learning Models
+##  Machine Learning Models
 
 ### 1. MBTA Occupancy Prediction
 
