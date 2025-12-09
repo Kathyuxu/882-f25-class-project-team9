@@ -1,0 +1,8 @@
+streamlit
+pandas
+pydeck
+altair
+google-cloud-bigquery
+db-dtypes
+matplotlib
+google-cloud-aiplatform>=1.71.1
