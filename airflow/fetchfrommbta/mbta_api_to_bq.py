@@ -599,3 +599,4 @@ with DAG(
     create_pred_base >> pred_to_gcs >> load_pred_stage >> merge_pred >> truncate_pred_stage
     create_veh_base >> veh_to_gcs >> load_veh_stage >> merge_veh >> truncate_veh_stage
 
+
