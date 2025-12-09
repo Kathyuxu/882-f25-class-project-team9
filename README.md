@@ -858,7 +858,7 @@ This project is an academic assignment for **BA882 - Fall 2025** at Questrom Sch
 
 ##  Acknowledgments
 
-- **Professor:** Dr. [Professor Name], BA882 - Fall 2025
+- **Professor:** Dr. Brock Tibert, BA882 - Fall 2025
 - **MBTA:** For providing comprehensive open data APIs
 - **Bluebikes:** For maintaining GBFS-compliant real-time data feeds
 - **Astronomer:** For Airflow hosting and support
