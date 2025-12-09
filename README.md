@@ -304,7 +304,7 @@ MAX_ITERATIONS = 50
 
 ### 3. Bluebikes Demand Prediction
 
-**Model Type:** Linear Regression (BigQuery ML)
+**Model Type:** Linear Regression (BigQuery ML), ARIMA, DNN, XGBoost, Random Forest
 
 **Purpose:** Forecast future Bluebikes demand for proactive bike redistribution
 
@@ -329,6 +329,9 @@ MAX_ITERATIONS = 50
 - Automated training via Airflow DAG
 - Predictions stored in BigQuery
 - Real-time visualization in Streamlit dashboard
+
+**Best Model:** ARIMA
+
 
 ---
 
@@ -411,6 +414,21 @@ Built with **Streamlit**, the dashboard provides real-time insights and interact
 - Walking distance calculations
 - Station status indicators
 
+#### 10. 🔍 AI Transit Assistant
+- **Real-time Station Finder:**
+  - Search any MBTA station by name
+  - View nearest Bluebikes stations instantly
+  - Display current bike and dock availability
+- Walking distance calculations
+- Station status indicators
+
+#### 11. 🔍 Bluebikes & Policy Assistant
+- **Real-time Station Finder:**
+  - Search any MBTA station by name
+  - View nearest Bluebikes stations instantly
+  - Display current bike and dock availability
+- Walking distance calculations
+- Station status indicators
 ---
 
 ## 🚀 Getting Started
@@ -621,6 +639,11 @@ streamlit run app.py
 ### Data Sources
 - **MBTA Developer Portal:** [https://www.mbta.com/developers](https://www.mbta.com/developers)
 - **Bluebikes System Data:** [https://bluebikes.com/system-data](https://bluebikes.com/system-data)
+- **Policy Website:**: [https://www.mbta.com/policies](https://www.mbta.com/policies)
+                       [https://www.mbta.com/bikes](https://www.mbta.com/bikes)
+                       [https://bluebikes.com/how-it-works]( https://bluebikes.com/how-it-works)
+                       [https://bluebikes.com/pricing](https://bluebikes.com/pricing)
+                       [https://bluebikes.com/system-data](https://bluebikes.com/system-data)
 
 ### Documentation
 - [MBTA API Documentation](https://www.mbta.com/developers/v3-api)
@@ -640,7 +663,7 @@ This project is an academic assignment for **BA882 - Fall 2025** at Questrom Sch
 
 ## 🙏 Acknowledgments
 
-- **Professor:** Dr. [Professor Name], BA882 - Fall 2025
+- **Professor:** Dr. Brock Tibert, BA882 - Fall 2025
 - **MBTA:** For providing comprehensive open data APIs
 - **Bluebikes:** For maintaining GBFS-compliant real-time data feeds
 - **Astronomer:** For Airflow hosting and support
@@ -651,8 +674,6 @@ This project is an academic assignment for **BA882 - Fall 2025** at Questrom Sch
 ## 📞 Contact
 
 For questions, feedback, or collaboration opportunities:
-
-- **GitHub Issues:** [Report a bug or suggest a feature](https://github.com/Kathyuxu/882-f25-class-project-team9/issues)
 - **Email:** Contact team members via GitHub profiles
 
 ---
